@@ -14,7 +14,7 @@ class UploadSourceMapWebpackPlugin {
     compiler.hooks.done.tap("upload-sourecemap-plugin", async (status) => {
       // 读取sourcemap文件
       const list = glob.sync(
-        path.join(status.compilation.outputOptions.path, `./**/*.{js.map,}`)
+        path.join(status.compilation.outputOptions.path, `./**/*.{map,}`)
       );
       for (let filename of list) {
         await this.upload(this.options.uploadUrl, filename);
@@ -41,6 +41,9 @@ class UploadSourceMapWebpackPlugin {
         })
         .on("end", () => {
           req.end();
+          fs.unlink(file, () => {
+            console.log("删除成功");
+          });
           resolve();
         });
     });
