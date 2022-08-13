@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkwjy_vue_tpl=self.webpackChunkwjy_vue_tpl||[]).push([[237],{9237:function(t,e,n){n.r(e),n.d(e,{default:function(){return l}});var u={name:"Home"},l=(0,n(6358).Z)(u,(function(){this._self._c;return this._m(0)}),[function(){var t=this._self._c;return t("div",[t("h1",{staticClass:"home-title"},[this._v("Home~~~")])])}],!1,null,null,null).exports}}]);
+//# sourceMappingURL=237.17013e43c6.chunk.js.map

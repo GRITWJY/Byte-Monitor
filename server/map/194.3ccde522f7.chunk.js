@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkwjy_vue_tpl=self.webpackChunkwjy_vue_tpl||[]).push([[194],{4194:function(t,e,u){u.r(e),u.d(e,{default:function(){return l}});var n={name:"text"},l=(0,u(6358).Z)(n,(function(){return(0,this._self._c)("h1",[this._v("test")])}),[],!1,null,"b3204fe6",null).exports}}]);
+//# sourceMappingURL=194.3ccde522f7.chunk.js.map

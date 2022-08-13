@@ -2,6 +2,8 @@ const sourceMap = require("source-map");
 const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
+const multipartry = require("multiparty");
+
 const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
@@ -65,3 +67,58 @@ function getMapFileContent(url) {
     "utf-8"
   );
 }
+
+const uploadDir = `${__dirname}/map`;
+const multipartry_load = function (req, auto) {
+  // eslint-disable-next-line no-unused-expressions
+  typeof auto !== "boolean" ? (auto = false) : null;
+  let config = {
+    maxFieldsSize: 200 * 1024 * 1024,
+  };
+  if (auto) config.uploadDir = uploadDir;
+  // 解析文件并放到指定目录下
+  return new Promise(async (resolve, reject) => {
+    // 用来将客户端formData 结果解析
+    new multipartry.Form(config).parse(req, (err, fields, files) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      var inputFile = files.file[0];
+      var uploadPath = inputFile.path;
+      console.log(inputFile);
+      var dstPath = `${__dirname}/map/${inputFile.originalFilename}`;
+      console.log(dstPath);
+      fs.rename(uploadPath, dstPath, function (err) {
+        if (err) {
+          console.log("error");
+        } else {
+          console.log("ok");
+        }
+      });
+
+      resolve({
+        fields,
+        files,
+      });
+    });
+  });
+};
+
+app.post("/upload_single", async (req, res) => {
+  try {
+    //todo: 单文件上传核心, 用 multiparty_load 进行处理
+    let { files, fields } = await multipartry_load(req, true);
+    let file = (files.file && files.file[0]) || {};
+    res.send({
+      code: 0,
+      codeText: "上传成功",
+      originFilename: file.originFilename,
+    });
+  } catch (err) {
+    res.send({
+      code: 1,
+      codeText: err,
+    });
+  }
+});

@@ -1,21 +1,11 @@
 import React from "react";
-import { Collapse, Button, Upload } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
+import { Collapse, Button, Upload, Modal } from "antd";
 import "./home.css";
 import axios from "axios";
-import sourceMap from "source-map";
 import { useState } from "react";
 const { Panel } = Collapse;
-
-// sourcemap解析
-sourceMap.SourceMapConsumer.initialize({
-  "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.3/lib/mappings.wasm",
-});
-
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
+const { Dragger } = Upload;
 
 // Home组件
 const Home = () => {
@@ -67,32 +57,6 @@ const Home = () => {
     },
   ]);
 
-  /**以下注释是upload组件的实现*/
-  // const props = {
-  //   showUploadList: false,
-  //   beforeUpload(file) {
-  //     console.log(file);
-  //     const reader = new FileReader();
-  //     reader.readAsText(file, "UTF-8");
-  //     reader.onload = async (event) => {
-  //       console.log(typeof event.target.result);
-  //       console.log(event.target.result);
-  //       // const look_source = await analysisFile(
-  //       //   event.target.result,
-  //       //   stack.lineNumber,
-  //       //   stack.columnNumber
-  //       // );
-  //       // setCodeStr(look_source);
-  //       // console.log(look_source);
-  //     };
-  //     return false;
-  //   },
-  // } // const getExtra = () => (
-  //   //   <Upload {...props}>
-  //   //     <Button>上传文件</Button>
-  //   //   </Upload>
-  //   // );
-
   // 用 node.js 后端实现解析
   const getFile = (info) => {
     axios({
@@ -111,41 +75,6 @@ const Home = () => {
         })
       );
     });
-
-    // let myRequest = new Request("../../assets/main.443d6763ae.js.map");
-    // var myHeaders = new Headers();
-    // myHeaders.append("Content-Type", "text/plain");
-
-    // fetch(myRequest, {
-    //   headers: myHeaders,
-    // }).then(async function (response) {
-    //   let blob = await response.blob();
-    //   let file = new window.File([blob], "main.433d6763ae.js.map", {
-    //     type: "",
-    //   });
-    //   console.log(file);
-    //
-    //   const reader = new FileReader();
-    //   reader.readAsText(file, "UTF-8");
-    //   reader.onload = async (event) => {
-    //     console.log(event.target.result);
-    //     // const look_source = await analysisFile(
-    //     //   event.target.result,
-    //     //   info.lineNumber,
-    //     //   info.columnNumber
-    //     // );
-    //     //
-    //     // setStack(
-    //     //   stack.map((item) => {
-    //     //     if (item.id === info.id) {
-    //     //       item.codeStr = look_source;
-    //     //     }
-    //     //     return item;
-    //     //   })
-    //     // );
-    //     // console.log(look_source);
-    //   };
-    // });
   };
 
   // 每个折叠板的按钮
@@ -159,71 +88,75 @@ const Home = () => {
     </Button>
   );
 
-  // JIE西文件, 现以转为后端实现
-  // const analysisFile = async (source_map, line, col) => {
-  //   console.log(source_map);
-  //   try {
-  //     const consumer = await new sourceMap.SourceMapConsumer(source_map);
-  //     const sourcemapData = consumer.originalPositionFor({
-  //       line: line, // 压缩后的行数
-  //       column: col, // 压缩后的列数
-  //     });
-  //
-  //     if (!sourcemapData.source) return;
-  //
-  //     const sources = consumer.sources;
-  //     // 根据查到的source，到源文件列表中查找索引位置
-  //     const index = sources.indexOf(sourcemapData.source);
-  //     // 到源码列表中查到源代码
-  //     const content = consumer.sourcesContent[index];
-  //
-  //     // 将源代码串按"行结束标记"拆分为数组形式
-  //     const rawLines = content.split(/\r?\n/g);
-  //
-  //     // 截取报错行前后代码片段，因为数组索引从0开始，故行数需要-1
-  //     let code = [];
-  //     for (let i = sourcemapData.line - 10; i < sourcemapData.line + 10; i++) {
-  //       if (i >= 0) {
-  //         const content = i + 1 + ".    " + encodeHTML(rawLines[i]);
-  //         code.push(content);
-  //       }
-  //     }
-  //     // 最后将解析结果和代码片段返回
-  //     return code.join("\n");
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // 把<>替换为 编码
-  const encodeHTML = (str) => {
-    if (!str || str.length === 0) return "";
-    return str
-      .replace(/&/g, "&#38;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/'/g, "&#39;");
-  };
-
   const onChange = (key) => {
     console.log(key);
   };
 
+  // 对话框
+  let [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  // 文件上传
+
+  const uploadProps = {
+    name: "file",
+    action: "http://localhost:3001/upload_single",
+    multiple: true,
+    progress: {
+      strokeColor: {
+        "0%": "#108ee9",
+        "100%": "#87d068",
+      },
+      strokeWidth: 3,
+      format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+    },
+  };
+
   return (
-    <Collapse defaultActiveKey={["1"]} onChange={onChange}>
-      {stack.map((item) => {
-        return (
-          <Panel
-            header={item.fileName}
-            key={item.id}
-            extra={getExtra(item)}
-            collapsible="header"
-          >
-            <PreCode code={item.codeStr}></PreCode>
-          </Panel>
-        );
-      })}
-    </Collapse>
+    <>
+      <Button onClick={showModal}>上传文件</Button>
+      <Collapse defaultActiveKey={["1"]} onChange={onChange}>
+        {stack.map((item) => {
+          return (
+            <Panel
+              header={item.fileName}
+              key={item.id}
+              extra={getExtra(item)}
+              collapsible="header"
+            >
+              <PreCode code={item.codeStr}></PreCode>
+            </Panel>
+          );
+        })}
+      </Collapse>
+
+      <Modal
+        title="上传 source-map 文件"
+        visible={isModalVisible}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <Dragger {...uploadProps}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Click or drag file to this area to upload
+          </p>
+          <p className="ant-upload-hint">
+            Support for a single or bulk upload. Strictly prohibit from
+            uploading company data or other band files
+          </p>
+        </Dragger>
+      </Modal>
+    </>
   );
 };
 

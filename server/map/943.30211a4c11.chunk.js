@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkwjy_vue_tpl=self.webpackChunkwjy_vue_tpl||[]).push([[943],{4943:function(u,e,t){t.r(e),t.d(e,{default:function(){return l}});var n={},l=(0,t(6358).Z)(n,(function(){var u=this,e=u._self._c;return e("div",[e("h1",[u._v("About~~~")]),u._v(" "),e("router-view")],1)}),[],!1,null,null,null).exports}}]);
+//# sourceMappingURL=943.30211a4c11.chunk.js.map
