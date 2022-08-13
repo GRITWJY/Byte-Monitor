@@ -1,0 +1,15 @@
+.errCode {
+    padding: 10px;
+    overflow: hidden;
+    font-family: Consolas,monospace;
+    word-wrap: normal;
+}
+
+.code-line {
+    padding: 4px;
+}
+
+.heightlight {
+    color: #fff;
+    background-color: #6c5fc7;
+}
