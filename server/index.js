@@ -1,4 +1,5 @@
 const sourceMap = require("source-map");
+var formidable = require("formidable");
 const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
@@ -86,9 +87,9 @@ const multipartry_load = function (req, auto) {
       }
       var inputFile = files.file[0];
       var uploadPath = inputFile.path;
-      console.log(inputFile);
       var dstPath = `${__dirname}/map/${inputFile.originalFilename}`;
       console.log(dstPath);
+      console.log(uploadPath);
       fs.rename(uploadPath, dstPath, function (err) {
         if (err) {
           console.log("error");
@@ -107,6 +108,7 @@ const multipartry_load = function (req, auto) {
 
 app.post("/upload_single", async (req, res) => {
   try {
+    console.log(req);
     //todo: 单文件上传核心, 用 multiparty_load 进行处理
     let { files, fields } = await multipartry_load(req, true);
     let file = (files.file && files.file[0]) || {};
@@ -121,4 +123,42 @@ app.post("/upload_single", async (req, res) => {
       codeText: err,
     });
   }
+});
+
+/**
+ * multipart 和 formidable 的区别
+ * multipart 是 FormData类型
+ * formidable
+ *
+ * */
+
+// 文件上传
+app.post("/upload", async (req, res) => {
+  var form = new formidable.IncomingForm(); // 创建上传表单
+  form.encoding = "utf-8"; // 设置编辑
+  form.uploadDir = `${__dirname}/map`; // 设置上传目录
+  form.keepExtensions = true; // 保留后缀
+  form.maxFieldsSize = 2 * 1024 * 1024; // 文件大小（默认20M）
+
+  form.parse(req, function (err, fields, files) {
+    if (err) {
+      res.send({
+        status: 201,
+        message: err,
+      });
+      return;
+    }
+    try {
+      var newPath = form.uploadDir + "/" + req.query.name;
+      // 若文件流的键名为uplaodFile，则fs.renameSync(files.uplaodFile.path, newPath)
+      fs.renameSync(files.file.filepath, newPath); //重命名
+      res.send({ status: 200, message: "文件上传成功" });
+    } catch (err) {
+      res.send({
+        status: 201,
+        message: err,
+      });
+      return;
+    }
+  });
 });
