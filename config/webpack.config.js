@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const SourceMapUploadPlugin = require("./source-map-upload-plugin");
+// const SourceMapUploadPlugin = require("./source-map-upload-plugin");
 const webpack = require("webpack");
 const resolve = require("resolve");
 const PnpWebpackPlugin = require("pnp-webpack-plugin");
@@ -583,9 +583,6 @@ module.exports = function (webpackEnv) {
             : undefined
         )
       ),
-      new SourceMapUploadPlugin({
-        uploadUrl: "http://localhost:3001/upload",
-      }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358

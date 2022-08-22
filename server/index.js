@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 
+// 案例
 app.post("/getErrorDetail", (req, res) => {
   parse(req.body).then((data) => {
     res.send(data);
