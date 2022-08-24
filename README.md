@@ -1,6 +1,6 @@
 ```
 项目目录结构
-```
+
 |-- webMonitor // 项目
     |-- .gitignore
     |-- package-lock.json
@@ -65,6 +65,9 @@
                 |   |-- Sourcemapset.js // sourece-map配置
                 |-- user // 用户轨迹
                     |-- User.js
+
+```
+
 
 
 前端运行: `npm run start`
